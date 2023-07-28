@@ -48,3 +48,101 @@ En esta clase aprendimos:
 - Cómo utilizar Eclipse y su perspectiva de debug.
 - Cómo cambiar entre perspectivas de Eclipse.
 Hagas clic [aquí](https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Exception.html "aquí") para acceder a la documentación oficial y obtener más información sobre la clase Exception.
+
+## Tratamiento de excepciones
+
+Ahora forzaremos una excepción en nuestra clase *Flujo* del proyecto *Java-stack*.
+
+1.  Dentro del for del metodo2(), haga lo siguiente:
+
+```java
+for(int i = 1; i <= 5; i++) {
+        System.out.println(i);
+        int a = i / 0;
+}
+```
+¡Esto debe retornarnos un *ArithmeticException*!
+
+2. Para evitar que la excepción caiga en nuestra pila, usemos el bloque *try* y *catch*:
+
+```java
+try{
+        int a = i / 0;
+} catch(ArithmeticException ex) {
+        System.out.println("ArithmeticException");
+}
+```
+
+3. Sin embargo, podemos usar *try* y *catch* al llamar a *metodo2()*, dentro de *metodo1()*, de la siguiente manera:
+
+```java
+try {
+        metodo2();
+} catch(ArithmeticException ex) {
+        System.out.println("ArithmeticException");
+}
+```
+
+4. Podemos subir una vez más nuestro *try* y *catch* para nuestro método *main*, en el momento de llamar al *método1()*. Además, podemos definir algunas cosas de nuestra excepción, como recibir el mensaje:
+
+```java
+try {
+        metodo1();
+} catch(ArithmeticException ex) {
+        String msg = ex.getMessage();
+        System.out.println("ArithmeticException " + msg);
+}
+```
+
+5. Otra cosa que podemos hacer es rastrear nuestra excepción:
+
+```java
+try {
+        metodo1();
+} catch(ArithmeticException ex) {
+        String msg = ex.getMessage();
+        System.out.println("ArithmeticException " + msg);
+        ex.printStackTrace();
+}
+```
+
+6. Ahora, hagamos otra prueba. Para hacer esto, cree la clase *Cuenta* de la siguiente manera:
+
+```java
+public class Cuenta {
+        void depositar() {
+        }
+}
+```
+
+7. Y, dentro del método *metodo2()*, haremos la siguiente prueba:
+
+```java
+for(int i = 1; i <= 5; i++) {
+        System.out.println(i);
+        Cuenta c = null;
+        c.depositar();
+}
+```
+
+8. Pero la excepción causada es una *NullPointerException*, para capturar esta excepción, debemos ponerla dentro de catch en el método *main*:
+
+```java
+try {
+        metodo1();
+} catch(ArithmeticException | NullPointerException ex) {
+        String msg = ex.getMessage();
+        System.out.println("Exception " + msg);
+        ex.printStackTrace();
+}
+```
+
+## ¿Qué aprendimos?
+
+En esta clase aprendemos:
+
+- Qué son las excepciones, para qué sirven y por qué se utilizarlas.
+- Cómo analizar el seguimiento de excepciones o *stacktrace*.
+- Manejar excepciones con bloques *try-catch*.
+- Manejar una excepción lanzada dentro del bloque *catch*.
+- Manejar múltiples excepciones con más de un bloque catcho usando *Multi-Catch* usando el *pipe* (|).
