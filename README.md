@@ -223,7 +223,7 @@ throw new MiExcepcion("Surgió un error");
 
 4. También necesitamos agregar el tipo *MiExcepcion* dentro del *catch* en la clase Flujo:
 
-````java
+```java
 try {
         metodo1();
 } catch(ArithmeticException | NullPointerException | MiExcepcion ex) {
