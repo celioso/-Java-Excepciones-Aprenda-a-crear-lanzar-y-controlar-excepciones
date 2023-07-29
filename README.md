@@ -484,3 +484,163 @@ En esta clase, aprendimos y practicamos:
 - cómo crear un bloque catch genérico utilizando la clase Exception;
 - cómo crear una nueva excepción SaldoInsuficienteException;
 - cómo transformar la excepción en checked o unchecked.
+
+### Haga lo que hicimos en el aula: Finally y try with resources
+
+Hagamos algunas pruebas ahora.
+
+1. Empiece por crear la clase *Conexion*:
+
+```java
+public class Conexion {
+
+
+        public Conexion () {
+            System.out.println("Abriendo conexión");
+        }
+
+
+        public void leerDatos() {
+            System.out.println("Recibiendo datos");
+//            throw new IllegalStateException();
+        }
+
+
+        public void cerrar() {
+            System.out.println("Cerrando conexión ");
+        }
+}
+```
+
+2. Ahora, para probar nuestra conexión, necesitaremos crear otra clase, *TestConexion*. No olvide el método principal:
+
+```java
+public class TestConexion {
+
+
+        public static void main(String[] args) {
+
+        }
+}
+```
+
+3. Dentro del método *main*, de nuestra clase recién creada, pondremos un bloque try y catch para hacer uso de nuestra conexión:
+
+```java
+try{
+        Conexion con = new Conexion();
+        con.leerDatos();
+        con.cerrar();
+} catch(IllegalStateException ex){
+        System.out.println("Surgio un error en la conexión");
+}
+```
+
+4. No olvide descomentar la línea respectiva dentro de la clase Conexion.
+
+5. Queremos cerrar nuestra conexión siempre, incluso en caso de errores, por lo que debemos asegurarnos de que siempre se llame al método *con.cerrar()*. Para ello, tenemos el bloque finally. Haz lo siguiente:
+
+```java
+Conexion con = null;
+try{
+        con = new Conexion();
+        con.leerDatos();
+        con.cerrar();
+} catch(IllegalStateException ex){
+        System.out.println("Surgió un error en la conexión ");
+} finally {
+        con.cerrar();
+}
+```
+
+6) Todavía podemos mejorar nuestro código. Para ello, haremos la declaración de conexión entre paréntesis del *try*, aplicando lo siguiente:
+
+```java
+try(Conexion conexion = new Conexion() ){
+
+}
+```
+
+7. Debido a la declaración anterior, necesitamos que nuestra clase Conexion implemente la interfaz *AutoCloseable* y el método *close()*. Entonces, lo dejaremos de la siguiente manera:
+
+```java
+public class Conexion implements AutoCloseable{
+
+        public Conexion() {
+            System.out.println("Abriendo Conexion");
+        }
+
+        public void leerDatos() {
+            System.out.println("Recibiendo datos");
+                throw new IllegalStateException();
+        }
+
+        @Override
+        public void close() {
+            System.out.println("Cerrando Conexion");
+        }
+}
+```
+
+8. Ahora, llamaremos al método *leerDados()*, dentro de nuestro nuevo *try*, comentando el código anterior.
+
+```java
+try(Conexion conexion = new Conexion () ){
+        conexion.leerDatos();
+}
+```
+
+9. Todavía tenemos que hacer nuestro nuevo *catch* también, que se verá así:
+
+```java
+try(Conexion conexion = new Conexion () ){
+        conexion.leerDatos();
+} catch(IllegalStateException ex){
+        System.out.println("Surgió un error en la conexión ");
+}
+```
+
+### Para saber más: Excepciones padrones
+
+En el video, usamos la excepción *IllegalStateException*, que es parte de la biblioteca de Java e indica que un objeto tiene un estado invalido. Es posible que haya visto otras excepciones famosas, como *NullPointerException*. Ambos son parte de las excepciones padrones del mundo Java que el desarrollador debe conocer.
+
+Hay otra excepción padrón importante que podríamos haber utilizado en nuestro proyecto. Para ponerlo en contexto, ¿tiene sentido crear una cuenta con una agencia que tiene un valor negativo? Por ejemplo:
+
+```java
+Cuenta c = new CuentaCorriente (-111, 222);  //¿tiene sentido?
+```
+
+No tiene ningún sentido. Entonces, podríamos verificar los valores en el constructor de la clase. Si el valor es incorrecto, lanzamos una excepción. ¿Cual? La *IllegalArgumentException*, que es parte de las excepciones de la biblioteca de Java:
+
+```java
+public abstract class Cuenta {
+
+    //atributos omitidos
+
+    public Cuenta(int agencia, int numero){
+
+        if(agencia < 1) {
+            throw new IllegalArgumentException("Agencia inválida");
+        }
+
+        if(numero < 1) {
+            throw new IllegalArgumentException("Número de cuenta inválido");
+        }
+
+        //resto del constructor fue omitido
+    }
+}
+```
+
+*IllegalArgumentException* e *IllegalStateException* son dos excepciones importantes que el desarrollador de Java debería utilizar. En general, cuando tenga sentido, utilice una excepción estándar en lugar de crear la suya propia.
+
+¿Todo bien hasta ahora?
+
+### ¿Qué aprendimos?
+
+En esta clase aprendimos:
+
+- que existe un bloque *finally*, útil para cerrar recursos (como conexión);
+- cuando hay un bloque *finally*, el bloque de catch es opcional;
+- que el bloque * finally * se ejecuta siempre, sin o con excepción;
+- cómo utilizar *try-with-resources*.
